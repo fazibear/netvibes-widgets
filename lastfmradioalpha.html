@@ -1,0 +1,149 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Last.fm Radio Alpha</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="http://www.netvibes.com/api/0.2/style.css" />
+<script type="text/javascript" src="http://www.netvibes.com/api/0.2/behavior.js"></script>
+<script type="text/javascript" src="http://www.netvibes.com/js/prototype.js"></script>
+<script type="text/javascript">
+
+var lastfmradioalpha_config = new Array();
+	
+lastfmradioalpha_parseRequest = function( request ){
+	var lines = request.split('\n');
+	for(i=0;i<lines.length;i++){
+		props = lines[i].split('=');
+		if(props.length==2){
+			lastfmradioalpha_config[props[0]] = props[1];
+		}
+		if(props.length>2){
+			for(j=1;j<props.length;j++){
+				if(j>1){
+					lastfmradioalpha_config[props[0]] += '='+props[j];
+				}else{
+					lastfmradioalpha_config[props[0]] = props[j];
+				}
+			}
+		}
+	}
+}
+
+lastfmradioalpha_play = function(){
+	if(lastfmradioalpha_config['stream_url']){
+		if( $('player') ){
+			$('player').innerHTML = "";
+		}
+		App.launchPlayer(lastfmradioalpha_config['stream_url']+'&rand='+Math.random(),'last.fm radio');
+		setTimeout( lastfmradioalpha_getMeta, 10000 );
+	}else{
+		lastfmradioalpha_getSession();
+	}
+}
+
+lastfmradioalpha_getSession = function() {
+	if( $F('lastfmradioalpha_username') != ''  && $F('lastfmradioalpha_passmd5') != '' ){
+		var url = 'http://wsdev.audioscrobbler.com/radio/handshake.php?username='+$F('lastfmradioalpha_username')+'&passwordmd5='+$F('lastfmradioalpha_passmd5')+'&rand='+Math.random();
+			var myAjax = new Ajax.Request('/ajaxProxy.php?url='+escape(url),{
+			method: 'get',
+			onSuccess: function(xhr){
+				lastfmradioalpha_parseRequest(xhr.responseText);
+				lastfmradioalpha_play();
+			},
+			onFailure: function(xhr){}
+			});
+	}else{
+		$('lastfmradioalpha_meta').innerHTML = "Configure !!!";
+	}
+}
+
+lastfmradioalpha_getMeta = function() {
+	var url = 'http://wsdev.audioscrobbler.com/radio/np.php?session='+lastfmradioalpha_config['session']+'&rand='+Math.random();
+		var myAjax = new Ajax.Request('/ajaxProxy.php?url='+escape(url),{
+		method: 'get',
+		onSuccess: function(xhr){
+			lastfmradioalpha_parseRequest(xhr.responseText);
+			if( lastfmradioalpha_config['streaming'] == 'true' ){
+
+				if( $F('lastfmradioalpha_cover') == 1 ){
+					$('lastfmradioalpha_coverView').src = lastfmradioalpha_config['albumcover_small'];
+				}else if( $F('lastfmradioalpha_cover') == 2 ){
+					$('lastfmradioalpha_coverView').src = lastfmradioalpha_config['albumcover_medium'];
+				}else if( $F('lastfmradioalpha_cover') == 3 ){
+					$('lastfmradioalpha_coverView').src = lastfmradioalpha_config['albumcover_large'];
+				}
+
+				$('lastfmradioalpha_artistView').innerHTML = lastfmradioalpha_config['artist'];
+				$('lastfmradioalpha_titleView').innerHTML  = lastfmradioalpha_config['track'];
+				$('lastfmradioalpha_albumView').innerHTML  = lastfmradioalpha_config['album'];
+				if( lastfmradioalpha_config['trackduration'] > 0 ){
+					setTimeout( lastfmradioalpha_getMeta, lastfmradioalpha_config['trackduration']*1000 ) 
+				}else{
+					setTimeout( lastfmradioalpha_getMeta, 60000 ) 
+				}
+			}
+		},
+		onFailure: function(xhr){}
+		});
+}
+
+lastfmradioalpha_confToggle = function(){
+	var conf = $('lastfmradioalpha_conf');
+
+	if(conf.style.display != ""){
+		conf.style.display = ""
+	}else{
+		conf.style.display = "none"
+	}
+}
+
+lastfmradioalpha_makemd5 = function(){
+	if($('lastfmradioalpha_passmd5')){
+		$('lastfmradioalpha_passmd5').value = hex_md5( $F('lastfmradioalpha_passmd5') );
+	}
+}
+
+</script>
+</head>
+<body>
+	<form class="configure" method="post" action="lastfmradioalpha.html" style="border: 1px solid #b9d0ef; background-color: #eff5ff; padding: 5px; margin-bottom: 3px; display: none; height: 1%;" id="lastfmradioalpha_conf">
+
+		<label for="lastfmradioalpha_username" style="width: 45%; float: left; clear: left; margin-top: 5px; height: 15px;">Username:</label>
+		<input name="lastfmradioalpha_username" id="lastfmradioalpha_username" type="text" value="" style="width: 45%; border: 1px solid #aaa; float: right; margin-top: 3px;"/>
+		<br style="clear: both;"/>
+
+		<label for="lastfmradioalpha_passmd5" style="width: 45%; float: left; clear: left; margin-top: 5px; height: 15px;">Password (md5):</label>
+		<input name="lastfmradioalpha_passmd5" id="lastfmradioalpha_passmd5" type="text" value="" style="width: 45%; border: 1px solid #aaa; float: right; margin-top: 3px;"/>
+		<br style="clear: both;"/>
+
+		<label for="lastfmradioalpha_cover" style="width: 45%; float: left; clear: left; margin-top: 5px; height: 15px;">Display cover:</label>
+		<select name="lastfmradioalpha_cover" id="lastfmradioalpha_cover" type="text" style="width: 45%; border: 1px solid #aaa; float: right; margin-top: 3px; _margin-right: 5px;">
+			<option value="0">No</option>
+			<option value="1">Small</option>
+			<option value="2">Medium</option>
+			<option value="3">Big</option>
+		</select>
+		<br style="clear: both;"/>
+		
+		<input class="submit" name="add" type="submit" value="Save" style="float: right; margin-top: 5px;"/>
+		<input type="button" name="lastfmradioalpha_passmd5_button" value="md5" style="float: right; margin-top: 5px; margin-right: 3px;" onclick="lastfmradioalpha_makemd5();"/>
+		
+		<br style="clear: both;"/>
+	</form>
+
+	<div id="lastfmradioalpha_meta">
+		<img src="" id="lastfmradioalpha_coverView" style="display: block; float: left; margin-right: 10px;"/>
+		<div style="float: left;">
+			<div style="margin-top: 5px;"><b>Artist: </b><span id="lastfmradioalpha_artistView"> - </span></div>
+			<div style="margin-top: 5px;"><b>Title: </b><span id="lastfmradioalpha_titleView"> - </span></div>
+			<div style="margin-top: 5px;"><b>Album: </b><span id="lastfmradioalpha_albumView"> - </span></div>
+		</div>
+		<br style="clear: both;"/>
+	</div>
+
+	<div style="text-align: center; font-size: 10px; color: #bbb; border-top: 1px solid #ddd; margin-top: 3px;">
+		[ <a id="lastfmradioalpha_playlink" href="#" onclick="lastfmradioalpha_play();return false;">Play</a> | <a href="#" onclick="lastfmradioalpha_confToggle();return false;" style="color: #bbb;">configure</a> | v0.1 | FaziBear ]
+	</div>
+</body>
+</html>

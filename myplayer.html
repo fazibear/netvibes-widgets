@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" 
+  xmlns:widget="http://www.netvibes.com/ns/">
+  <head>
+    <meta name="version" content="0.1" />
+    <meta name="apiVersion" content="1.0" />
+    <meta name="author" content="FaziBear" />
+    <meta name="description" content="Bring MySpace player to your page." />
+    <meta name="website" content="http://fazibear.prv.pl" />
+    <meta name="keywords" content="music, player, myspace" />
+    <meta name="screenshot" content="" />
+    <meta name="thumbnail" content="" />
+    <meta name="debugMode" content="false" />
+    <widget:preferences>
+      <preference name="profile_name" type="text" label="Profile name" />
+      <preference name="profile_id" type="text" label="or profile ID" />
+    </widget:preferences>
+    <link rel="stylesheet" type="text/css" href="http://www.netvibes.com/themes/uwa/style.css" />
+    <script type="text/javascript" src="http://www.netvibes.com/js/UWA/load.js.php?env=Standalone"></script>
+    <title>myPlayer</title>
+    <script type="text/javascript">
+      widget.onLoad = function() {
+        function remove_br(a){ return a.replace(/[\n\r]+/g, ""); }
+        var player_regexp = /<OBJECT.*OBJECT>/m;
+        if(widget.getValue('profile_name')){
+          var profile_page = 'http://www.mys'+'pace.com/'+widget.getValue('profile_name');
+        }else if(widget.getValue('profile_id')){
+          var profile_page = 'http://profile.mys'+'pace.com/index.cfm?fuseaction=user.viewprofile&friendID='+widget.getValue('profile_id');
+        }
+        UWA.Data.getText(profile_page, function(response){ 
+          var player = remove_br(response).match(player_regexp);
+          if(player){
+            widget.setBody(player[0]);
+          }else{
+            widget.setBody("Can't find any player.");
+          }
+        });
+      }
+    </script>
+  </head>
+  <body>
+  </body>
+</html> 

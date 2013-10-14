@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" 
+  xmlns:widget="http://www.netvibes.com/ns/">
+  <head>
+    <meta name="version" content="0.999u" />
+    <meta name="apiVersion" content="1.0" />
+    <meta name="author" content="FaziBear" />
+    <meta name="description" content="This widget works only within Netvibes with inline mode. With this widget you can make you Netvibes page look better." />
+    <meta name="website" content="http://fazibear.prv.pl" />
+    <meta name="keywords" content="customize, transparency, background, wallpaper" />
+    <meta name="screenshot" content="http://netvibes.atspace.com/images/customize.jpg" />
+    <meta name="thumbnail" content="http://netvibes.atspace.com/images/customize_mini.jpg" />
+    <meta name="debugMode" content="false" />
+    <widget:preferences>
+      <preference name="inline" type="boolean" label="Inline this widget (page reload required)" />
+      <preference name="enabled" type="boolean" label="Enabled" />
+      <preference name="background_url" type="text" label="Background URL"/>
+      <preference name="background_horizontal" type="list" label="Background horizontal position">
+        <option value="0%" label="left"/>
+        <option value="50%" label="center"/>
+        <option value="100%" label="right"/>
+      </preference>
+      <preference name="background_vertical" type="list" label="Background vertical position">
+        <option value="0%" label="top"/>
+        <option value="50%" label="center"/>
+        <option value="100%" label="bottom"/>
+      </preference>
+      <preference name="background_repeat" type="list" label="Background repeat">
+        <option value="no-repeat" label="no"/>
+        <option value="repeat" label="yes"/>
+        <option value="repeat-x" label="only vertical"/>
+        <option value="repeat-y" label="only horizontal"/>
+      </preference>
+      <preference name="background_attachment" type="list" label="Background attachment">
+        <option value="fixed" label="fixed"/>
+        <option value="scroll" label="scroll"/>
+      </preference>
+      
+      <preference name="header_url" type="text" label="Header background URL"/>
+      <preference name="header_horizontal" type="list" label="Header background horizontal position">
+        <option value="0%" label="left"/>
+        <option value="50%" label="center"/>
+        <option value="100%" label="right"/>
+      </preference>
+      <preference name="header_vertical" type="list" label="Header background vertical position">
+        <option value="0%" label="top"/>
+        <option value="50%" label="center"/>
+        <option value="100%" label="bottom"/>
+      </preference>
+      <preference name="header_repeat" type="list" label="Header background repeat">
+        <option value="no-repeat" label="no"/>
+        <option value="repeat" label="yes"/>
+        <option value="repeat-x" label="only vertical"/>
+        <option value="repeat-y" label="only horizontal"/>
+      </preference>
+      <preference name="header_attachment" type="list" label="Header background attachment">
+        <option value="fixed" label="fixed"/>
+        <option value="scroll" label="scroll"/>
+      </preference>
+      <preference name="header_opacity" type="list" label="Header opacity">
+        <option value="1" label="100%"/>
+        <option value="0.9" label="90%"/>
+        <option value="0.8" label="80%"/>
+        <option value="0.7" label="70%"/>
+        <option value="0.6" label="60%"/>
+        <option value="0.5" label="50%"/>
+        <option value="0.4" label="40%"/>
+        <option value="0.3" label="30%"/>
+        <option value="0.2" label="20%"/>
+        <option value="0.1" label="10%"/>
+      </preference>
+      <!--
+      <preference name="header_pin" type="list" label="Pin header">
+        <option value="0" label="no"/>
+        <option value="top" label="To top"/>
+        <option value="top" label="To bottom"/>
+      </preference>
+      -->
+      <preference name="hide_top_links" type="boolean" label="Hide top links" />
+      <preference name="top_links_opacity" type="list" label="Top links opacity">
+        <option value="1" label="100%"/>
+        <option value="0.9" label="90%"/>
+        <option value="0.8" label="80%"/>
+        <option value="0.7" label="70%"/>
+        <option value="0.6" label="60%"/>
+        <option value="0.5" label="50%"/>
+        <option value="0.4" label="40%"/>
+        <option value="0.3" label="30%"/>
+        <option value="0.2" label="20%"/>
+        <option value="0.1" label="10%"/>
+      </preference>
+      <preference name="hide_tab_bar" type="boolean" label="Hide tab bar" />
+      <preference name="hide_feed_counts" type="boolean" label="Hide feed counts" />
+      
+      <preference name="remove_modules_border" type="boolean" label="Remove modules border" />
+      <preference name="modules_opacity" type="list" label="Modules opacity">
+        <option value="1" label="100%"/>
+        <option value="0.9" label="90%"/>
+        <option value="0.8" label="80%"/>
+        <option value="0.7" label="70%"/>
+        <option value="0.6" label="60%"/>
+        <option value="0.5" label="50%"/>
+        <option value="0.4" label="40%"/>
+        <option value="0.3" label="30%"/>
+        <option value="0.2" label="20%"/>
+        <option value="0.1" label="10%"/>
+      </preference>
+      
+      <preference name="feed_reader_show_modules" type="boolean" label="Show content under feed reader" />
+      <preference name="feed_reader_opacity" type="list" label="Feed reader opacity">
+        <option value="1" label="100%"/>
+        <option value="0.9" label="90%"/>
+        <option value="0.8" label="80%"/>
+        <option value="0.7" label="70%"/>
+        <option value="0.6" label="60%"/>
+        <option value="0.5" label="50%"/>
+        <option value="0.4" label="40%"/>
+        <option value="0.3" label="30%"/>
+        <option value="0.2" label="20%"/>
+        <option value="0.1" label="10%"/>
+        <option value="0%" label="0%"/>
+      </preference>
+
+      <preference name="hide_footer" type="boolean" label="Hide footer" />
+      <preference name="footer_opacity" type="list" label="Footer opacity opacity">
+        <option value="1" label="100%"/>
+        <option value="0.9" label="90%"/>
+        <option value="0.8" label="80%"/>
+        <option value="0.7" label="70%"/>
+        <option value="0.6" label="60%"/>
+        <option value="0.5" label="50%"/>
+        <option value="0.4" label="40%"/>
+        <option value="0.3" label="30%"/>
+        <option value="0.2" label="20%"/>
+        <option value="0.1" label="10%"/>
+      </preference>
+
+    </widget:preferences>
+    <link rel="stylesheet" type="text/css" href="http://www.netvibes.com/themes/uwa/style.css" />
+    <script type="text/javascript" src="http://www.netvibes.com/js/UWA/load.js.php?env=Standalone"></script>
+    <title>Netvibes Customize</title>
+    <script type="text/javascript">
+      widget.onLoad = function() {
+        if(window != parent){
+          widget.setBody('This widget works only within Netvibes with inline mode. If you make this widget inline try to refresh whole page.');  
+          return;
+        }
+        var css = {};
+        if( widget.getValue('background_url') != ''){
+          css["body"] = { "background": "transparent" }
+          css["html"] = {
+            "background-color": "transparent",
+            "background-image": 'url('+widget.getValue('background_url')+')',
+            "background-repeat": widget.getValue('background_repeat'),
+            "background-attachment": widget.getValue('background_attachment'),
+            "background-position": widget.getValue('background_horizontal')+' '+widget.getValue('background_vertical')
+          }
+        }
+        if( widget.getValue('header_url') != ''){
+          css["#header"] = {
+            "background-color": "transparent",
+            "background-image": 'url('+widget.getValue('header_url')+')',
+            "background-repeat": widget.getValue('header_repeat'),
+            "background-attachment": widget.getValue('header_attachment'),
+            "background-position": widget.getValue('header_horizontal')+' '+widget.getValue('header_vertical')
+          }
+        }
+        if( widget.getBool('remove_modules_border') ){
+          css[".module, .moduleEdit"] = {
+            "border": "none"
+          }
+          css["#columns .moduleFrame"] = {
+            "border-width": "0"
+          }
+        }
+        if( widget.getBool('feed_reader_show_modules') ){
+          css["#columns"] = {
+            "display": "block"
+          }
+        }
+        if( widget.getBool('hide_top_links') ){
+          css["#top"] = {
+            "display": "none"
+          }
+        }
+        if( widget.getBool('hide_tab_bar') ){
+          css["#divTabs"] = {
+            "display": "none"
+          }
+        }
+        if( widget.getBool('hide_feed_counts') ){
+          css[".innerTab .unread"] = {
+            "display": "none"
+          }
+        }
+        if( widget.getBool('hide_footer') ){
+          css["#footer"] = {
+            "display": "none"
+          }
+        }
+        css["#top "] = {
+          "opacity": widget.getValue('top_links_opacity'),
+          "-moz-opacity": widget.getValue('top_links_opacity'),
+          "-khtml-opacity": widget.getValue('top_links_opacity'),
+          "filter": "alpha(opacity="+widget.getValue('top_links_opacity')*100+")",
+          "zoom": "1"
+        }
+        css["#header "] = {
+          "opacity": widget.getValue('header_opacity'),
+          "-moz-opacity": widget.getValue('header_opacity'),
+          "-khtml-opacity": widget.getValue('header_opacity'),
+          "filter": "alpha(opacity="+widget.getValue('header_opacity')*100+")",
+          "zoom": "1"
+        }
+        css["#feedReaderFrame"] = {
+          "opacity": widget.getValue('feed_reader_opacity'),
+          "-moz-opacity": widget.getValue('feed_reader_opacity'),
+          "-khtml-opacity": widget.getValue('feed_reader_opacity'),
+          "filter": "alpha(opacity="+widget.getValue('feed_reader_opacity')*100+")",
+          "zoom": "1"
+        }
+        css["#footer "] = {
+          "opacity": widget.getValue('footer_opacity'),
+          "-moz-opacity": widget.getValue('footer_opacity'),
+          "-khtml-opacity": widget.getValue('footer_opacity'),
+          "filter": "alpha(opacity="+widget.getValue('footer_opacity')*100+")",
+          "zoom": "1"
+        }
+        css[".module, .moduleEdit "] = {
+          "background": "transparent"
+        }
+        css[".module .moduleFrame, .moduleEdit .moduleFrame"] = {
+          "opacity": widget.getValue('modules_opacity'),
+          "-moz-opacity": widget.getValue('modules_opacity'),
+          "-khtml-opacity": widget.getValue('modules_opacity'),
+          "filter": "alpha(opacity="+widget.getValue('modules_opacity')*100+")",
+          "zoom": "1"
+        }
+        var head = document.getElementsByTagName('head').item(0);
+        for(var i=0; (styleToRemove = head.getElementsByTagName('style')[i]); i++){
+          if(styleToRemove.getAttribute('module') == 'customize'){
+            head.removeChild( styleToRemove );
+          }
+        }
+        if( widget.getBool('enabled') ){
+          var stylesheet = "";
+          for(var i in css){
+            stylesheet += i + " {\n"
+              for(var j in css[i]){
+                stylesheet += "\t" + j + ": " + css[i][j] + " !important;\n"     
+              }
+            stylesheet += "}\n"  
+          }
+          var style = document.createElement('style');
+          style.setAttribute('type', 'text/css');
+          style.setAttribute('module', 'customize' );
+          if(style.styleSheet){
+            style.styleSheet.cssText = stylesheet;
+          } else {
+            style.appendChild(document.createTextNode(stylesheet));
+          }
+          head.appendChild( style );
+        }
+      }
+    </script>
+  </head>
+  <body>
+  </body>
+</html> 

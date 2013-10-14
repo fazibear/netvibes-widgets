@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" 
+  xmlns:widget="http://www.netvibes.com/ns/">
+  <head>
+    <meta name="version" content="0.8" />
+    <meta name="apiVersion" content="1.0" />
+    <meta name="author" content="FaziBear" />
+    <meta name="description" content="Just write text in one box and read translated text in other, quick and easy :) You can use all avaiable languages from Google Language Tool." />
+    <meta name="website" content="http://fazibear.prv.pl" />
+    <meta name="keywords" content="translation, language, translate" />
+    <meta name="debugMode" content="false" />
+    <link rel="stylesheet" type="text/css" href="http://www.netvibes.com/themes/uwa/style.css" />
+    <script type="text/javascript" src="http://www.netvibes.com/js/UWA/load.js.php?env=Standalone"></script>
+    <title>Quick Translator</title>
+    <style type="text/css">
+      textarea { width: 99%; border: 1px solid #666; height: 100px; margin: 5px 0; _width: 90%; background: transparent; color: inherit;}
+     </style>
+    <script type="text/javascript">
+      widget.onLoad = function() {
+        var input_text = widget.body.getElementsByClassName("input-text")[0];
+        var lang_chooser = widget.body.getElementsByClassName("lang-chooser")[0];
+        var clear_button = widget.body.getElementsByClassName("clear-button")[0];
+        var swap_button = widget.body.getElementsByClassName("swap-button")[0];
+        var translate_button = widget.body.getElementsByClassName("translate-button")[0];
+        var output_text = widget.body.getElementsByClassName("output-text")[0];
+
+        var translation_regexp = /<div[^>]*result_box[^>]*>([^<]+)<\/div>/
+		    var url = 'http://translate.google.com/translate_t';
+
+        var translate = function(){
+          UWA.Data.request(url, {
+            method: 'post', 
+            parameters: 'id=UTF8&langpair='+lang_chooser.childNodes[0].value+'&text='+input_text.value,
+            onComplete: function(response){
+              var translation = response.replace(/(\r\n|[\r\n])/g, " ");
+              if( translation_regexp.test(translation)){
+                translation = translation.match(translation_regexp)[1];
+                output_text.value = translation;
+              }
+            }
+          })
+        }
+
+        input_text.onkeyup = function(){
+          if( input_text.value.length > 0 ){
+            var lastCharacter = input_text.value.charCodeAt(input_text.value.length - 1);
+            if ((lastCharacter < 48) || (lastCharacter > 122) || ((lastCharacter > 57) && (lastCharacter < 65)) ||  ((lastCharacter > 90) && (lastCharacter < 97))) {
+              translate();    
+            }
+          }
+        }
+
+        clear_button.onclick = function(){
+          input_text.value = '';
+          output_text.value = '';
+        }
+
+        swap_button.onclick = function(){
+          input_text.value = output_text.value;
+          outptut_text.value = '';
+          translate();
+        }
+        
+        UWA.Data.getText(url+'?langpair='+widget.getValue('current_language'), function(response){
+          var select = response.replace(/(\r\n|[\r\n])/g, " ");
+          if(/<select.*langpair.*>/.test(select)){
+            select = select.replace(/.*(<select.*langpair.*>.*<\/select>).*/g, "$1");
+            lang_chooser.innerHTML = select;
+            lang_chooser.childNodes[0].onchange = function(){
+              widget.setValue('current_language',lang_chooser.childNodes[0].value);
+              translate();
+            }
+          }
+        })
+      }
+    </script>
+  </head>
+  <body>
+    <div style="text-align: center">
+      <textarea class="input-text">&nbsp;</textarea>
+      <br/>
+      <span class="lang-chooser">&nbsp;</span>
+      <input type="button" value="Clear" class="clear-button"/>
+      <input type="button" value="Swap" class="swap-button"/>
+      <input type="button" value="Translate" class="translate-button"/>
+      <br/>
+      <textarea class="output-text">&nbsp;</textarea>
+    </div>
+    <div style="text-align: center; font-size: 10px; color: #bbb;">
+      [ v0.8 | FaziBear ]
+    </div>
+  </body>
+</html> 

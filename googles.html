@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" 
+  xmlns:widget="http://www.netvibes.com/ns/">
+  <head>
+    <meta name="version" content="1.0" />
+    <meta name="apiVersion" content="1.0" />
+    <meta name="author" content="FaziBear" />
+    <meta name="description" content="Displays google search bar with suggestions." />
+    <meta name="website" content="http://fazibear.prv.pl" />
+    <meta name="keywords" content="search, google, suggest" />
+    <meta name="debugMode" content="false" />
+    <link rel="stylesheet" type="text/css" href="http://www.netvibes.com/themes/uwa/style.css" />
+    <script type="text/javascript" src="http://www.netvibes.com/js/UWA/load.js.php?env=Standalone"></script>
+    <title>Google Suggest</title>
+    <style type="text/css">
+    </style>
+    <widget:preferences>    
+			<preference name="suggest" type="boolean" label="Enable suggestion" defaultValue="true" />
+    	<preference name="window" type="boolean" label="Open in new window"/>
+    </widget:preferences>
+    <script type="text/javascript">
+      widget.onLoad = function() {
+        var form = widget.body.getElementsByClassName('form')[0];
+        var query = widget.body.getElementsByClassName('query')[0];
+        var submit = widget.body.getElementsByClassName('submit')[0];
+        var ul = widget.body.getElementsByClassName('nv-feedList')[0];
+        var parse = function( element, querry, sugg, empty ){
+          ul.innerHTML = '';
+          if(sugg.length < 5) return;
+          for(var i=1; i < sugg.length; i += 2){
+            var li = document.createElement("li");
+            li.className = "nv-feedList";
+            var link = document.createElement("a");
+            link.style.display = "block";
+            link.href = "#";
+            link.innerHTML = sugg[i];
+            link.style.fontWeight = 'bold';
+            link.className = i;
+            link.onclick = function() {
+              query.value = sugg[this.className];
+              form.submit();
+              return false;
+            }
+            var count = document.createElement("span");
+            count.innerHTML = " ("+sugg[i+1]+")";
+            count.style.fontWeight = 'normal';
+            link.appendChild(count);
+            li.appendChild(link);
+            ul.appendChild(li);
+          }
+        }
+        form.onsubmit = function(){
+          if( widget.getBool('window') ){ 
+            form.target="_blank";
+	        }
+        }
+        query.onkeyup = function(){
+          if(widget.getBool('suggest')){
+            var url = 'http://www.google.pl/complete/search?js=true&qu='+escape( query.value );
+            UWA.Data.getText(url, function(resp){
+		  	      eval( resp.replace(/window.google.ac.Suggest_apply/g,"parse") );
+            })
+          }
+	      }
+      }
+    </script>
+  </head>
+  <body>
+    <div class="search">
+    <form action="http://www.google.com/search" style="display: block; position: relative;" class="form">
+      <img class="favicon" src="http://cdn.netvibes.com/modules/vibes/img/google.png"/>
+      <input name="q" type="text" class="search query" style="padding-right: 18px;"/>
+      <img alt="Clear" title="Clear" src="http://www.netvibes.com/img/clear.gif" class="clear" style="margin-top: -3px; visibility: hidden;"/>
+      <input type="submit" class="submit" value="Search" style="margin-left: 5px;"/>
+    </form>
+  </div>
+    <ul class="nv-feedList">
+    </ul>
+  </body>
+</html> 
