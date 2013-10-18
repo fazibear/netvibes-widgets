@@ -1,0 +1,109 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Google Suggest</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="icon" href="http://www.google.com/favicon.ico" />
+<link rel="stylesheet" type="text/css" href="http://www.netvibes.com/api/0.2/style.css" />
+<script type="text/javascript" src="http://www.netvibes.com/api/0.2/behavior.js"></script>
+<script type="text/javascript" src="http://www.netvibes.com/js/prototype.js"></script>
+<script type="text/javascript">
+	
+googles_parse = function( element, querry, sugg, suggr, smth){
+	$('googles_suggest').innerHTML = "";
+	for(var i=0; i < sugg.length; i++){
+		
+		var block = document.createElement("a");
+		block.style.display = "block";
+		block.className = i;
+		
+		var txt = document.createElement("div");
+		txt.innerHTML = sugg[i];
+		txt.style.cssFloat = "left";
+		txt.style.styleFloat = "left";
+		txt.style.fontWeight = "bold";
+		block.appendChild( txt );
+		
+		var res = document.createElement("div");
+		res.innerHTML = suggr[i];
+		res.style.cssFloat = "right";
+		res.style.styleFloat = "right";
+		block.appendChild( res );
+			
+		var br = document.createElement("br");
+		br.style.clear = "both";
+		block.appendChild( br );
+		
+		block.onclick = function() {
+			$('googles_q').value = sugg[this.className];
+			googles_submit();
+		}
+				
+		block.href = "#";
+		$('googles_suggest').appendChild( block );
+	}
+}
+	
+googles_getSuggest = function() {
+	
+	if( getValue('googles_disablesuggest') != 1){
+	var url = 'http://www.google.pl/complete/search?js=true&qu='+escape( $F('googles_q') );
+	var myAjax = new Ajax.Request(
+			'/ajaxProxy.php?url='+escape(url),
+		{
+		method: 'get',
+		onSuccess: function(xhr){
+			eval( xhr.responseText.replace(/sendRPCDone/g,"googles_parse") );
+		},
+		onFailure: function(xhr){
+			alert('Error : ' + xhr.status + ' - ' + xhr.responseText);
+		}
+		});
+	}
+}
+
+googles_submit = function(){
+	if( getValue('googles_newwin') == 1){ 
+		$('googles_form').target="_blank";
+	}
+	$('googles_form').submit();
+	return false;
+}
+	
+</script>
+</head>
+<body>
+	<form class="configuration" method="post" action="googles.html">
+		
+		<label for="googles_newwin" style="width: 45%; float: left; clear: left; margin-top: 5px; height: 15px;">Open new win/tab:</label>
+		<select name="googles_newwin" id="googles_newwin" type="text" style="width: 45%; border: 1px solid #aaa; float: right; margin-top: 3px;">
+			<option value="1">Yes</option>
+			<option value="0">No</option>
+		</select>
+		<br style="clear: both;"/>
+		
+		<label for="googles_disablesuggest" style="width: 45%; float: left; clear: left; margin-top: 5px; height: 15px;">Disable suggest:</label>
+		<select name="googles_disablesuggest" id="googles_disablesuggest" type="text" style="width: 45%; border: 1px solid #aaa; float: right; margin-top: 3px;">
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+		</select>
+		<br style="clear: both;"/>
+		
+		<input class="submit" name="add" type="submit" value="Save" style="float: right; margin-top: 5px;"/>
+		<br style="clear: both;"/>
+	</form>
+	
+	<form action="http://www.google.com/search" id="googles_form">
+		<img src="http://www.netvibes.com/modules/webSearch/img/google.gif" style="vertical-align: middle; margin-right: 7px; float: left; margin-top: 2px;"/>
+		<input name="q" id="googles_q" value="" onkeyup="googles_getSuggest();" style="margin-top: 2px; float: left;"/>
+		<input value="Go" type="submit" style="float:left; margin-left: 7px; margin-top: 0px;" onclick="googles_submit();"/>
+	</form>
+	<br style="clear: both"/>
+	<div id="googles_suggest" style="border-top: 1px solid #ddd; margin-top: 5px;">
+	</div>
+	<div style="text-align: center; color: #bbb; font-size: 10px;">
+		[ v1.0 | FaziBear ]
+	</div>
+</body>
+</html>

@@ -1,0 +1,161 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title>Search &amp; Suggest</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<link rel="icon" href="http://www.google.com/favicon.ico" />
+		<link rel="stylesheet" type="text/css" href="http://www.netvibes.com/api/0.2/style.css" />
+		<script type="text/javascript" src="http://www.netvibes.com/api/0.2/behavior.js"></script>
+		<script type="text/javascript" src="http://www.netvibes.com/js/prototype.js"></script>
+		<script type="text/javascript">
+
+			search_parse = function( element, querry, sugg, suggr, smth){
+				$('search_suggest').innerHTML = "";
+				for(var i=0; i < sugg.length; i++){
+
+					var block = document.createElement("a");
+					block.style.display = "block";
+					block.className = i;
+
+					var txt = document.createElement("div");
+					txt.innerHTML = sugg[i];
+					txt.style.cssFloat = "left";
+					txt.style.styleFloat = "left";
+					txt.style.fontWeight = "bold";
+					block.appendChild( txt );
+
+					var res = document.createElement("div");
+					res.innerHTML = suggr[i];
+					res.style.cssFloat = "right";
+					res.style.styleFloat = "right";
+					block.appendChild( res );
+
+					var br = document.createElement("br");
+					br.style.clear = "both";
+					block.appendChild( br );
+
+					block.onclick = function() {
+						$('search_q').value = sugg[this.className];
+						search_submit();
+					}
+
+					block.href = "#";
+					$('search_suggest').appendChild( block );
+				}
+			}
+
+search_getSuggest = function() {
+
+	if( getValue('search_disablesuggest') != 1){
+		var url = 'http://www.google.pl/complete/search?js=true&qu='+escape( $F('search_q') );
+		var myAjax = new Ajax.Request(
+				'/ajaxProxy.php?url='+escape(url),
+				{
+method: 'get',
+onSuccess: function(xhr){
+eval( xhr.responseText.replace(/sendRPCDone/g,"search_parse") );
+},
+onFailure: function(xhr){
+alert('Error : ' + xhr.status + ' - ' + xhr.responseText);
+}
+});
+}
+}
+
+search_submit = function(){
+	$('search_form').action = $F('search_engine');	
+	if( getValue('search_newwin') == 1){ 
+		$('search_form').target="_blank";
+	}
+	$('search_form').submit();
+	return false;
+}
+
+</script>
+</head>
+<body>
+	<form class="configuration" method="post" action="search.html">
+
+		<label for="search_newwin" style="width: 45%; float: left; clear: left; margin-top: 5px; height: 15px;">Open new win/tab:</label>
+		<select name="search_newwin" id="search_newwin" type="text" style="width: 45%; border: 1px solid #aaa; float: right; margin-top: 3px;">
+			<option value="1">Yes</option>
+			<option value="0">No</option>
+		</select>
+		<br style="clear: both;"/>
+
+		<label for="search_disablesuggest" style="width: 45%; float: left; clear: left; margin-top: 5px; height: 15px;">Disable suggest:</label>
+		<select name="search_disablesuggest" id="search_disablesuggest" type="text" style="width: 45%; border: 1px solid #aaa; float: right; margin-top: 3px;">
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+		</select>
+		<br style="clear: both;"/>
+
+		<input class="submit" name="add" type="submit" value="Save" style="float: right; margin-top: 5px;"/>
+		<br style="clear: both;"/>
+	</form>
+
+	<form action="http://www.google.com/search" id="search_form">
+		<input name="q" id="search_q" value="" onkeyup="search_getSuggest();" style="float: left; width: 40%; "/>
+		<select name="engine" id="search_engine" style="float: left; width: 40%; margin-left: 7px;">
+			<optgroup label="Google&trade;">
+				<option value="http://www.google.com/search" selected="selected">Web</option>
+				<option value="http://images.google.com/images">Images</option>
+				<option value="http://groups.google.com/groups">Groups</option>
+				<option value="http://news.google.com/news">News</option>
+				<option value="http://froogle.google.com/froogle">Froogle&trade;</option>
+				<!-- <option value="">Local/Maps</option> -->
+				<option value="http://www.google.com/search?cat=gwd%2FTop">Directory</option>
+				<option value="http://www.google.com/unclesam">U.S. Government</option>
+
+				<option value="http://www.google.com/linux">Linux</option>
+				<option value="http://www.google.com/bsd">BSD</option>
+				<option value="http://www.google.com/mac">Apple&reg; Macintosh&reg;</option>
+				<option value="http://www.google.com/microsoft">Microsoft&reg;</option>
+			</optgroup>
+			<optgroup label="Yahoo!&reg;">
+				<option value="http://search.yahoo.com/search">Web</option>
+				<!--
+				<option value="">Images</option>
+				<option value="">Video</option>
+				<option value="">Audio</option>
+				<option value="">Directory</option>
+				<option value="">Local</option>
+				<option value="">News</option>
+				<option value="">Shopping</option>
+				<option value="">Creative Commons</option>
+				-->
+			</optgroup>
+			<optgroup label="MSN Search">
+				<option value="http://search.msn.com/results.aspx">Web</option>
+				<!--
+				<option value="">News</option>
+				<option value="">Images</option>
+				<option value="">Local (BETA)</option>
+				<option value="">Encarta</option>
+				-->
+			</optgroup>
+			<!--
+			<optgroup label="Wikipedia, the free encyclopedia">
+				<option value="">Go to Article</option>
+				<option value="">Search</option>
+
+			</optgroup>
+			<optgroup label="Mozilla Update">
+				<option value="">All</option>
+				<option value="">Extensions</option>
+				<option value="">Themes</option>
+			</optgroup>
+			-->
+		</select>
+
+		<input value="Go" type="submit" style="float:left; margin-left: 7px; margin-top: 0px;" onclick="search_submit();"/>
+	</form>
+	<br style="clear: both"/>
+	<div id="search_suggest" style="border-top: 1px solid #ddd; margin-top: 5px;">
+	</div>
+	<div style="text-align: center; color: #bbb; font-size: 10px;">
+		[ v0.8 | FaziBear ]
+	</div>
+</body>
+</html>

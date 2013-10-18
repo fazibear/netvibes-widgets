@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" 
+  xmlns:widget="http://www.netvibes.com/ns/">
+  <head>
+    <meta name="version" content="0.9" />
+    <meta name="apiVersion" content="1.0" />
+    <meta name="author" content="FaziBear" />
+    <meta name="description" content="Display old image-based last.fm charts." />
+    <meta name="website" content="http://fazibear.prv.pl" />
+    <meta name="keywords" content="last.fm, lastfm, charts, music" />
+    <meta name="debugMode" content="false" />
+    <widget:preferences>
+      <preference name="username" type="text" label="Last.fm username"/>
+      <preference name="type" type="list" label="Chart type">
+        <option value="recenttracks" label="Recent Tracks"/>
+        <option value="artists" label="Weekly Artist Charts"/>
+        <option value="tracks" label="Weekly Tracks Charts"/>
+        <option value="oartists" label="Overall Artists Charts"/>
+        <option value="otracks" label="Overall Tracks Charts"/>
+      </preference>
+      <preference name="style" type="text" label="Image style name" defaultValue="lastfmplain"/>
+      <preference name="refresh" type="text" label="Refresh (s)" defaultValue="60"/>
+    </widget:preferences>
+    <link rel="stylesheet" type="text/css" href="http://www.netvibes.com/themes/uwa/style.css" />
+    <script type="text/javascript" src="http://www.netvibes.com/js/UWA/load.js.php?env=Standalone"></script>
+    <title>Last.fm Statistics</title>
+    <style type="text/css">
+     </style>
+    <script type="text/javascript">
+      widget.onLoad = function() {
+        widget.setTitle("Last.fm: "+widget.getValue('username'));
+        var image = widget.body.getElementsByClassName("image")[0];
+        var refresh = function(){
+          var rand = Math.random();
+		      var imgtag = new Image();
+		      imgtag.src = "http://imagegen.last.fm/"+widget.getValue('style')+"/"+widget.getValue('type')+"/"+widget.getValue('username')+".gif?rand="+rand;
+		      imgtag.onload = function(){ 
+			      if(this.height > 1){
+				      image.innerHTML = '<img src="'+imgtag.src+'"/>';
+            }else{
+				      image.innerHTML = "Error: check options !";
+		        }
+          }
+          if(widget.getInt('refresh') > 0){
+            setTimeout(refresh, widget.getInt('refresh')*1000);
+          }
+		    }
+        refresh();
+      }
+    </script>
+  </head>
+  <body>
+    <div style="text-align: center; clear: both;" class="image">
+      Loading ...
+    </div>
+    <br style="clear: both;"/>
+    <div style="text-align: center; font-size: 10px; color: #bbb;">
+      [ v0.9 | FaziBear ]
+    </div>
+  </body>
+</html> 

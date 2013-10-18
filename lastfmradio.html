@@ -1,0 +1,171 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Last.fm Radio</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="http://www.netvibes.com/api/0.2/style.css" />
+<script type="text/javascript" src="http://www.netvibes.com/api/0.2/behavior.js"></script>
+<script type="text/javascript" src="http://www.netvibes.com/js/prototype.js"></script>
+<script type="text/javascript">
+
+var lastfmradio_config = new Array();
+	
+	
+lastfmradio_parseRequest = function( request ){
+	var lines = request.split('\n');
+	for(i=0;i<lines.length;i++){
+		props = lines[i].split('=');
+		if(props.length==2){
+			lastfmradio_config[props[0]] = props[1];
+		}
+		if(props.length>2){
+			for(j=1;j<props.length;j++){
+				if(j>1){
+					lastfmradio_config[props[0]] += '='+props[j];
+				}else{
+					lastfmradio_config[props[0]] = props[j];
+				}
+			}
+		}
+	}
+}
+
+lastfmradio_play = function(){
+	if(lastfmradio_config['stream_url']){
+		if( $('player') ){
+			$('player').innerHTML = "";
+		}
+		App.launchPlayer(lastfmradio_config['stream_url']+'&rand='+Math.random(),'last.fm radio');
+		setTimeout( lastfmradio_getMeta, 10000 );
+	}else{
+		lastfmradio_getSession();
+	}
+}
+
+lastfmradio_cmd = function(cmd){
+	var url = 'http://wsdev.audioscrobbler.com/radio/control.php?debug=0&session='+lastfmradio_config['session']+'&command='+cmd+'&rand='+Math.random();
+	var myAjax = new Ajax.Request('/ajaxProxy.php?url='+escape(url),{
+		method: 'get',
+		onSuccess: function(xhr){
+			lastfmradio_parseRequest(xhr.responseText);
+			lastfmradio_getMeta();
+			//lastfmradio_play();
+		},
+		onFailure: function(xhr){}
+		});
+}
+
+lastfmradio_getSession = function() {
+	var url = 'http://wsdev.audioscrobbler.com/radio/handshake.php?username='+$F('lastfmradio_username')+'&passwordmd5='+$F('lastfmradio_passmd5')+'&rand='+Math.random();
+		var myAjax = new Ajax.Request('/ajaxProxy.php?url='+escape(url),{
+		method: 'get',
+		onSuccess: function(xhr){
+			lastfmradio_parseRequest(xhr.responseText);
+			lastfmradio_play();
+		},
+		onFailure: function(xhr){}
+		});
+}
+
+lastfmradio_getMeta = function() {
+	var url = 'http://wsdev.audioscrobbler.com/radio/np.php?debug=0&session='+lastfmradio_config['session']+'&rand='+Math.random();
+		var myAjax = new Ajax.Request('/ajaxProxy.php?url='+escape(url),{
+		method: 'get',
+		onSuccess: function(xhr){
+			lastfmradio_parseRequest(xhr.responseText);
+			if( lastfmradio_config['streaming'] == 'true' ){
+
+				if( $F('lastfmradio_cover') == 1 ){
+					$('lastfmradio_coverView').src = lastfmradio_config['albumcover_small'];
+				}else if( $F('lastfmradio_cover') == 2 ){
+					$('lastfmradio_coverView').src = lastfmradio_config['albumcover_medium'];
+				}else if( $F('lastfmradio_cover') == 3 ){
+					$('lastfmradio_coverView').src = lastfmradio_config['albumcover_large'];
+				}
+
+				$('lastfmradio_artistView').innerHTML = lastfmradio_config['artist'];
+				$('lastfmradio_titleView').innerHTML  = lastfmradio_config['track'];
+				('lastfmradio_albumView').innerHTML  = lastfmradio_config['album'];
+				if( lastfmradio_config['trackduration'] > 0 ){
+					setTimeout( lastfmradio_getMeta, lastfmradio_config['trackduration']*1000 ) 
+				}else{
+					setTimeout( lastfmradio_getMeta, 60000 ) 
+				}
+			}
+		},
+		onFailure: function(xhr){}
+		});
+}
+
+lastfmradio_confToggle = function(){
+	var conf = document.getElementById('lastfmradio_conf');
+
+	if(conf.style.display != ""){
+		conf.style.display = ""
+	}else{
+		conf.style.display = "none"
+	}
+}
+
+lastfmradio_makemd5 = function(){
+	pass = document.getElementById('lastfmradio_passmd5');
+	if( $('lastfmradio_passmd5') ){
+		$('lastfmradio_passmd5').value = hex_md5( $F('lastfmradio_passmd5') );
+	}
+}
+
+</script>
+</head>
+<body>
+	<form class="configure" method="post" action="lastfmradio.html" style="border: 1px solid #b9d0ef; background-color: #eff5ff; padding: 5px; margin-bottom: 3px; display: none; height: 1%;" id="lastfmradio_conf">
+
+		<label for="lastfmradio_username" style="width: 45%; float: left; clear: left; margin-top: 5px; height: 15px;">Username:</label>
+		<input name="lastfmradio_username" id="lastfmradio_username" type="text" value="" style="width: 45%; border: 1px solid #aaa; float: right; margin-top: 3px;"/>
+		<br style="clear: both;"/>
+
+		<label for="lastfmradio_passmd5" style="width: 45%; float: left; clear: left; margin-top: 5px; height: 15px;">Password (md5):</label>
+		<input name="lastfmradio_passmd5" id="lastfmradio_passmd5" type="text" value="" style="width: 45%; border: 1px solid #aaa; float: right; margin-top: 3px;"/>
+		<br style="clear: both;"/>
+
+		<label for="lastfmradio_station" style="width: 45%; float: left; clear: left; margin-top: 5px; height: 15px;">Station:</label>
+		<input name="lastfmradio_station" id="lastfmradio_station" type="text" value="" style="width: 45%; border: 1px solid #aaa; float: right; margin-top: 3px;"/>
+		<br style="clear: both;"/>
+
+		<label for="lastfmradio_cover" style="width: 45%; float: left; clear: left; margin-top: 5px; height: 15px;">Display cover:</label>
+		<select name="lastfmradio_cover" id="lastfmradio_cover" type="text" style="width: 45%; border: 1px solid #aaa; float: right; margin-top: 3px; _margin-right: 5px;">
+			<option value="0">No</option>
+			<option value="1">Small</option>
+			<option value="2">Medium</option>
+			<option value="3">Big</option>
+		</select>
+		<br style="clear: both;"/>
+		
+		<input class="submit" name="add" type="submit" value="Save" style="float: right; margin-top: 5px;"/>
+		<input type="button" name="lastfmradio_passmd5_button" value="md5" style="float: right; margin-top: 5px; margin-right: 3px;" onclick="lastfmradio_makemd5();"/>
+		
+		<br style="clear: both;"/>
+	</form>
+
+	<div id="lastfmradio_meta">
+		<img src="" id="lastfmradio_coverView" style="display: block; float: left; margin-right: 10px;"/>
+		<div style="float: left;">
+			<div style="margin-top: 5px;"><b>Artist: </b><span id="lastfmradio_artistView"> - </span></div>
+			<div style="margin-top: 5px;"><b>Title: </b><span id="lastfmradio_titleView"> - </span></div>
+			<div style="margin-top: 5px;"><b>Album: </b><span id="lastfmradio_albumView"> - </span></div>
+		</div>
+		<br style="clear: both;"/>
+	</div>
+
+	<div id="lastfmradio_control" style="text-align: center; margin-top: 5px;">
+		<a id="lastfmradio_playlink" href="#" onclick="lastfmradio_play();return false;">Play</a> | 
+		<a id="lastfmradio_nextlink" href="#" onclick="lastfmradio_cmd('skip');return false;">Skip</a> | 
+		<a id="lastfmradio_nextlink" href="#" onclick="lastfmradio_cmd('love');return false;">Love</a> | 
+		<a id="lastfmradio_nextlink" href="#" onclick="lastfmradio_cmd('ban');return false;">Ban</a>
+	</div>
+
+	<div style="text-align: center; font-size: 10px; color: #bbb; border-top: 1px solid #ddd; margin-top: 3px;">
+		[ <a href="#" onclick="lastfmradio_confToggle();return false;" style="color: #bbb;">configure</a> | v0.3 | FaziBear ]
+	</div>
+</body>
+</html>

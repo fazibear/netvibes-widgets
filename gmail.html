@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>GMail quota</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="icon" href="http://mail.google.com/favicon.ico" />
+<link rel="stylesheet" type="text/css" href="http://www.netvibes.com/api/0.2/style.css" />
+<script type="text/javascript" src="http://www.netvibes.com/api/0.2/behavior.js"></script>
+<script type="text/javascript" src="http://www.netvibes.com/js/prototype.js"></script>
+<script type="text/javascript">
+
+	var PAD = '.000000';
+
+	function format(num) {
+		var str = String(num);
+		var dot = str.indexOf('.');
+		if (dot < 0) {
+			return str + PAD;
+		} if (PAD.length > (str.length - dot)) {
+			return str + PAD.substring(str.length - dot);
+		} else {
+			return str.substring(0, dot + PAD.length);
+		}
+	}
+
+	var CP = [
+		[ 1128150000000, 2650 ],
+		[ 1136102400000, 2680 ],
+		[ 1149145200000, 2730 ]
+	];
+
+	function updateQuota() {
+		
+		var quota = $('quota');
+		
+		if (!quota) {
+			return;
+		}
+		var now = (new Date()).getTime();
+		var i;
+		for (i = 0; i < CP.length; i++) {
+			if (now < CP[i][0]) {
+				break;
+			}
+		}
+		if (i == 0) {
+			setTimeout(updateQuota, 1000);
+		} else if (i == CP.length) {
+			quota.innerHTML = CP[i - 1][1];
+		} else {
+			var ts = CP[i - 1][0];
+			var bs = CP[i - 1][1];
+			quota.innerHTML = format(((now-ts) / (CP[i][0]-ts) * (CP[i][1]-bs)) + bs);
+			setTimeout(updateQuota, 1000);
+		}
+	}
+
+NV_ONLOAD = updateQuota;
+</script>
+</head>
+<body>
+	<div style="text-align: center">
+		GMAIL give you <span id="quota"> </span> MB for your emails !!!
+	</div>
+    <div style="text-align: center; color: #bbb; font-size: 10px; border-top: 1px solid #ddd; margin-top: 3px;">
+	        [ v0.1 | FaziBear ]
+	</div>
+</body>
+</html>

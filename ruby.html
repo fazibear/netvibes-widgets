@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" 
+  xmlns:widget="http://www.netvibes.com/ns/">
+  <head>
+    <meta name="version" content="0.999u" />
+    <meta name="apiVersion" content="1.0" />
+    <meta name="author" content="FaziBear" />
+    <meta name="description" content="This widget works only within Netvibes with inline mode. With this widget you can make you Netvibes page look better." />
+    <meta name="website" content="http://fazibear.prv.pl" />
+    <meta name="keywords" content="customize, transparency, background, wallpaper" />
+    <meta name="screenshot" content="http://netvibes.atspace.com/images/customize.jpg" />
+    <meta name="thumbnail" content="http://netvibes.atspace.com/images/customize_mini.jpg" />
+    <meta name="debugMode" content="false" />
+    <link rel="stylesheet" type="text/css" href="http://www.netvibes.com/themes/uwa/style.css" />
+    <script type="text/javascript" src="http://www.netvibes.com/js/UWA/load.js.php?env=Standalone"></script>
+    <title>Interactive Ruby</title>
+    <link rel="icon" type="image/png" href="http://www.netvibes.com/favicon.ico" />
+    <script type="text/javascript">
+      widget.onLoad = function() {
+        var url = 'http://tryruby.hobix.com/irb'
+        var input = widget.body.getElementsByClassName("input")[0];
+        var output = widget.body.getElementsByClassName("output")[0];
+        var submit = widget.body.getElementsByClassName("submit")[0];
+        var session_id = 0;
+        //UWA.Data.getText(url, function(){} );
+        UWA.Data.request(url, {
+          method: 'post',
+          parameters: 'cmd=!INIT!IRB!',
+          onComplete: function(response){
+            session_id = response;
+            document.cookie = "_session_id="+response;
+          }
+        })
+        submit.onclick = function(){
+          UWA.Data.request(url, {
+            method: 'post',
+            parameters: 'cmd='+input.value+'&_session_id='+session_id,
+            onComplete: function(response){
+              output.innerHTML += response;
+            }
+          })}
+        }
+   </script>
+  </head>
+  <body>
+    <pre class="output">
+    </pre>
+    <input class="input"/>
+    <input class="submit" type="button"/>
+  </body>
+</html> 

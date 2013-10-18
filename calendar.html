@@ -1,0 +1,250 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Netvibes Customize</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="http://www.netvibes.com/api/0.2/style.css" />
+<script type="text/javascript" src="http://www.netvibes.com/api/0.2/behavior.js"></script>
+<script type="text/javascript" src="http://www.netvibes.com/js/prototype.js"></script>
+<script type="text/javascript">
+	
+	
+	customize_confToggle = function(){
+		var conf = document.getElementById('customize_conf');
+
+		if(conf.style.display != ""){
+			conf.style.display = ""
+		}else{
+			conf.style.display = "none"
+		}
+	}
+
+customize_cleanup = function( head ){
+	for( i=0; (style = head.getElementsByTagName('style')[i]); i++){
+		if(style.getAttribute('module') == 'customize'){
+			head.removeChild( style );
+		}
+	}
+}
+
+customize_start = function() {
+
+
+	var stylesheet = "";
+	
+	stylesheet += ".transparent{ filter:alpha(opacity=100); -moz-opacity:1 !important; opacity: 1 !important; background-color: #FFF !important; }";
+
+	if( $F('customize_attach') == 'scroll' && $F('customize_positionv') == '0%'){
+		$('customize_positionv').value = '58px';
+	}
+	
+	stylesheet += "html { background: transparent url('"+$F('customize_url')+"') "+$F('customize_repeat')+" "+$F('customize_attach')+" "+$F('customize_positionh')+" "+$F('customize_positionv')+" !important; } ";
+	
+	stylesheet += ".module, .moduleEdit { ";
+	
+	if(Browser.isIE){
+		stylesheet += "width: 98% !important; ";
+		stylesheet += "filter: alpha(opacity="+$F('customize_opacity')*100+") !important; ";
+	}else{
+		stylesheet += "opacity: "+$F('customize_opacity')+" !important; ";
+		stylesheet += "-moz-opacity: "+$F('customize_opacity')+" !important; ";
+	}
+
+	if( $F('customize_border') == 1 ){
+		stylesheet += "border: 0px solid #000 !important; "; 
+	}
+	
+	stylesheet += "} ";
+	
+
+	stylesheet += "#feedReader { ";
+	if(Browser.isIE){
+		stylesheet += "opacity: "+$F('customize_opacityfeed')+" !important; ";
+	}else{
+		stylesheet += "filter: alpha(opacity="+$F('customize_opacityfeed')*100+") !important; ";
+		stylesheet += "-moz-opacity: "+$F('customize_opacityfeed')+" !important; ";
+	}
+	
+	if( $F('customize_border') == 1 ){
+		stylesheet += "border: 0px solid #000 !important;";
+	}
+	
+	stylesheet += "} ";
+
+	if( $F('customize_tabs') == 1 ){
+		stylesheet += "#divTabsOuter { ";
+		stylesheet += "padding: 0px !important; ";
+		stylesheet += "border-bottom: 0px !important; ";
+		stylesheet += "} ";
+	}
+	
+
+	stylesheet += "#footer .part1, #footer .part2 { ";
+	
+	if(Browser.isIE){
+		stylesheet += "display: inline-block; ";
+		stylesheet += "filter: alpha(opacity="+$F('customize_opacityfoot')*100+") !important; ";
+	}else{
+		stylesheet += "opacity: "+$F('customize_opacityfoot')+" !important; ";
+		stylesheet += "-moz-opacity: "+$F('customize_opacityfoot')+" !important; ";
+	}
+	stylesheet += "} ";
+	
+	if( $F('customize_footer') == 0 ){
+		stylesheet += "#footer { display: none !important; } ";
+	}
+	
+	if( $F('customize_tabsMsgs')  == 1 ){
+		stylesheet += "#divTabs .msgs { display: none !important; } ";
+	}
+	
+	var style = document.createElement('style');
+	style.setAttribute('type', 'text/css');
+	style.setAttribute('module', 'customize' );
+	if(style.styleSheet){
+		style.styleSheet.cssText = stylesheet;
+	} else {
+		var inner = document.createTextNode(stylesheet);
+		style.appendChild(inner);
+	}
+
+	var head = document.getElementsByTagName('head').item(0);
+	customize_cleanup( head );
+	head.appendChild( style );
+
+}
+
+NV_ONLOAD = customize_start;
+</script>
+</head>
+<body>
+	<form class="configure" method="post" action="customize.html" style="border: 1px solid #b9d0ef; background-color: #eff5ff; padding: 5px; margin-bottom: 3px; display: none; height: 1%;" id="customize_conf">
+
+
+		<div style="clear: both;">Background:</div>
+
+		<label for="customize_url" style="width: 45%; float: left; clear: left; margin-top: 5px; height: 15px;">Url:</label>
+		<input name="customize_url" id="customize_url" type="text" value="" style="width: 45%; border: 1px solid #aaa; float: right; margin-top: 3px;"/>
+		<br style="clear: both;"/>
+		
+		<label for="customize_positionh" style="width: 45%; float: left; clear: left; margin-top: 5px; height: 15px;">Horizontal:</label>
+		<select name="customize_positionh" id="customize_positionh" type="text" style="width: 45%; border: 1px solid #aaa; float: right; margin-top: 3px; _margin-right: 5px;">
+			<option value="0%">left</option>
+			<option value="50%">center</option>
+			<option value="100%">right</option>
+		</select>
+		<br style="clear: both;"/>
+		
+		<label for="customize_positionv" style="width: 45%; float: left; clear: left; margin-top: 5px; height: 15px;">Vertical:</label>
+		<select name="customize_positionv" id="customize_positionv" type="text" style="width: 45%; border: 1px solid #aaa; float: right; margin-top: 3px; _margin-right: 5px;">
+			<option value="0%">top</option>
+			<option value="50%">center</option>
+			<option value="100%">bottom</option>
+		</select>
+		<br style="clear: both;"/>
+
+		<label for="customize_repeat" style="width: 45%; float: left; clear: left; margin-top: 5px; height: 15px;">Repeat:</label>
+		<select name="customize_repeat" id="customize_repeat" type="text" style="width: 45%; border: 1px solid #aaa; float: right; margin-top: 3px; _margin-right: 5px;">
+			<option value="no-repeat">no</option>
+			<option value="repeat">yes</option>
+			<option value="repeat-x">only vertical</option>
+			<option value="repeat-y">only horizontal</option>
+		</select>
+		<br style="clear: both;"/>
+		
+		<label for="customize_attach" style="width: 45%; float: left; clear: left; margin-top: 5px; height: 15px;">Attachment:</label>
+		<select name="customize_attach" id="customize_attach" type="text" style="width: 45%; border: 1px solid #aaa; float: right; margin-top: 3px; _margin-right: 5px;">
+			<option value="fixed">fixed</option>
+			<option value="scroll">scroll</option>
+		</select>
+		<br style="clear: both;"/>
+
+		<div style="margin-top: 5px; padding-top: 5px; border-top: 1px solid #aaa; clear: both;">Modules:</div>
+		
+		<label for="customize_opacity" style="width: 45%; float: left; clear: left; margin-top: 5px; height: 15px;">Blocks opacity:</label>
+		<select name="customize_opacity" id="customize_opacity" type="text" style="width: 45%; border: 1px solid #aaa; float: right; margin-top: 3px; _margin-right: 5px;">
+			<option value="1">100%</option>
+			<option value="0.9">90%</option>
+			<option value="0.8">80%</option>
+			<option value="0.7">70%</option>
+			<option value="0.6">60%</option>
+			<option value="0.5">50%</option>
+			<option value="0.4">40%</option>
+			<option value="0.3">30%</option>
+			<option value="0.2">20%</option>
+			<option value="0.1">10%</option>
+		</select>
+		<br style="clear: both;"/>
+		
+		<label for="customize_opacityfeed" style="width: 45%; float: left; clear: left; margin-top: 5px; height: 15px;">Feed opacity:</label>
+		<select name="customize_opacityfeed" id="customize_opacityfeed" type="text" style="width: 45%; border: 1px solid #aaa; float: right; margin-top: 3px; _margin-right: 5px;">
+			<option value="1">100%</option>
+			<option value="0.9">90%</option>
+			<option value="0.8">80%</option>
+			<option value="0.7">70%</option>
+			<option value="0.6">60%</option>
+			<option value="0.5">50%</option>
+			<option value="0.4">40%</option>
+			<option value="0.3">30%</option>
+			<option value="0.2">20%</option>
+			<option value="0.1">10%</option>
+		</select>
+		<br style="clear: both;"/>
+		
+		<label for="customize_border" style="width: 45%; float: left; clear: left; margin-top: 5px; height: 15px;">Remove borders:</label>
+		<select name="customize_border" id="customize_border" type="text" style="width: 45%; border: 1px solid #aaa; float: right; margin-top: 3px; _margin-right: 5px;">
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+		</select>
+		<br style="clear: both;"/>
+		
+		<div style="margin-top: 5px; padding-top: 5px; border-top: 1px solid #aaa; clear: both;">Footer:</div>
+
+		<label for="customize_footer" style="width: 45%; float: left; clear: left; margin-top: 5px; height: 15px;">Show:</label>
+		<select name="customize_footer" id="customize_footer" type="text" style="width: 45%; border: 1px solid #aaa; float: right; margin-top: 3px; _margin-right: 5px;">
+			<option value="1">Yes</option>
+			<option value="0">No</option>
+		</select>
+		<br style="clear: both;"/>
+		
+		<label for="customize_opacityfoot" style="width: 45%; float: left; clear: left; margin-top: 5px; height: 15px;">Opacity:</label>
+		<select name="customize_opacityfoot" id="customize_opacityfoot" type="text" style="width: 45%; border: 1px solid #aaa; float: right; margin-top: 3px; _margin-right: 5px;">
+			<option value="1">100%</option>
+			<option value="0.9">90%</option>
+			<option value="0.8">80%</option>
+			<option value="0.7">70%</option>
+			<option value="0.6">60%</option>
+			<option value="0.5">50%</option>
+			<option value="0.4">40%</option>
+			<option value="0.3">30%</option>
+			<option value="0.2">20%</option>
+			<option value="0.1">10%</option>
+		</select>
+		<br style="clear: both;"/>
+		
+		
+		<div style="margin-top: 5px; padding-top: 5px; border-top: 1px solid #aaa; clear: both;">Tabs:</div>
+		
+		<label for="customize_tabsMsgs" style="width: 45%; float: left; clear: left; margin-top: 5px; height: 15px;">Hide red counts:</label>
+		<select name="customize_tabsMsgs" id="customize_tabsMsgs" type="text" style="width: 45%; border: 1px solid #aaa; float: right; margin-top: 3px; _margin-right: 5px;">
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+		</select>
+		<br style="clear: both;"/>
+
+		<label for="customize_tabs" style="width: 45%; float: left; clear: left; margin-top: 5px; height: 15px;">Fix style:</label>
+		<select name="customize_tabs" id="customize_tabs" type="text" style="width: 45%; border: 1px solid #aaa; float: right; margin-top: 3px; _margin-right: 5px;">
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+		</select>
+		<br style="clear: both;"/>
+
+		<input class="submit" name="add" type="submit" value="Save" style="float: right; margin-top: 5px;"/>
+		<br style="clear: both;"/>
+	</form>
+	<div style="text-align: center; font-size: 10px; color: #bbb;">
+		[ <a href="#" onclick="customize_confToggle();return false;" style="color: #bbb;">configure</a> | v0.7 | FaziBear ]
+	</div>
+</body>
+</html>
